@@ -14,7 +14,7 @@ def excute_time(func):
         start_time = time.time()
         ret = func(*args, **kwargs)
         total_time = time.time() - start_time
-        print('程序耗时*.8f' % total_time)
+        print('程序耗时%.8f' % total_time)
         return ret
     return int_time
 
