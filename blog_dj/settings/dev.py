@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# CORS组的配置信息---添加白名单
+CORS_ORIGIN_WHITELIST = (
+    # 'http://www.DomainName.com:8088',
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许ajax跨域请求时携带cookie
 
 # Application definition
 
@@ -37,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #
+
+    # 子应用
 ]
 
 MIDDLEWARE = [

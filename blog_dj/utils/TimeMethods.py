@@ -2,8 +2,10 @@
 """
 关于时间的相关方法
 """
-import arrow
 import time
+import datetime
+
+import arrow
 import pandas as pd
 
 date_obj = arrow.now()
@@ -16,15 +18,16 @@ def excute_time(func):
         total_time = time.time() - start_time
         print('程序耗时%.8f' % total_time)
         return ret
+
     return int_time
 
 
 def timestamp():
     """ 时间戳 """
     return time.time()
-    
 
-def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
+
+def consecutive_ym(m: int = 0, n: int = 0, char: str = None) -> list:
     """
     描述：返回从当月往前推m个月、往后推n个月的连续月份数组
     1. 默认格式: 2020年12月
@@ -32,8 +35,8 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
     """
     today = datetime.date.today()
 
-    curr_month = today.month    # 当前月份
-    year = today.year - int(((m + 12 - curr_month)/12)) # 推算年份
+    curr_month = today.month  # 当前月份
+    year = today.year - int(((m + 12 - curr_month) / 12))  # 推算年份
 
     for i in range(m):
         curr_month -= 1
@@ -41,10 +44,10 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
             curr_month = 12
     month = curr_month  # 推算月份
 
-    ym_default = [str(year) + "年" + str(month) + "月" ]
+    ym_default = [str(year) + "年" + str(month) + "月"]
     ym_customize = [str(year) + f"{char}" + str(month).zfill(2)]
 
-    for j in range(m+n):
+    for j in range(m + n):
         month += 1
         if month > 12:
             month = 1
@@ -56,7 +59,7 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
         ym_customize.append(date_customize)
 
     if char is not None:
-        return  ym_customize
+        return ym_customize
 
     return ym_default
 
@@ -126,7 +129,7 @@ def str2datetime(date):
 
 
 # 待完善...
-def getTheMonth(date:str, n:int, format='%Y%m')->str:
+def getTheMonth(date: str, n: int, format='%Y%m') -> str:
     """
     获取指定月份 往前推n个月 的月份信息
     :param date: str
@@ -144,5 +147,3 @@ def getTheMonth(date:str, n:int, format='%Y%m')->str:
         else:
             month -= 1
     return datetime.date(year, month, 1).strftime(format)
-        
-        
