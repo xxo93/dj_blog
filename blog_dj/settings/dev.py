@@ -27,11 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# CORS���������Ϣ---���Ӱ�����
+# CORS组的配置信息---添加白名单
 CORS_ORIGIN_WHITELIST = (
     # 'http://www.DomainName.com:8088',
 )
-CORS_ALLOW_CREDENTIALS = True  # ����ajax��������ʱЯ��cookie
+CORS_ALLOW_CREDENTIALS = True  # 允许ajax跨域请求时携带cookie
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -42,12 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #
+    
+    'corsheaders',
+	'rest_framework',
+	'django_filters',
 
-    # ��Ӧ��
+    # 子应用
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,6 +91,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+# set database Maping
+DATABASE_ROUTERS = ['PyVbord.database_router.DatabaseAppsRouter']
+DATABASE_APPS_MAPPING = {
+    # example:
+	# 'app_name':'database_name',
 }
 
 
@@ -127,3 +138,55 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# django-redis配置
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/3",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             # 'PASSWORD': '', 密码配置
+#         }
+#     },
+#     'local_cache': {
+#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#         'LOCATION': 'unique-snowflake',
+#         "OPTIONS": {
+#             "MAX_ENTERS": 100
+#         }
+#     }
+# }
+
+# rest_framework相关配置
+REST_FRAMEWORK = {
+    # 身份校验
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        #     'rest_framework.authentication.SessionAuthentication',
+        #     'rest_framework.authentication.BasicAuthentication',
+
+        # 'blog_dj.utils.UserAuthentication.UserAuth',
+    ),
+
+    # 权限管理
+    "DEFAULT_PERMISSION_CLASSES": (
+        # 'PyVbord.utils.permissions.ModulePermission',
+        # 'PyVbord.utils.permissions.UrlPermission',
+    ),
+
+    # 过滤配置  根据条件来查找数据
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+
+    # 分页配置
+    # 扩展默认分页类，支持参数设置分页大小，默认分页大小参数：page_size
+    'DEFAULT_PAGINATION_CLASS': 'blog_dj.utils.GlobalPagination.PageNumberSizePagination',
+    'PAGE_SIZE': 10,  # 每页几条数据
+}
+
+# jwt 配置
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=24),  # 过期时间
+}
