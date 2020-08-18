@@ -88,8 +88,12 @@ WSGI_APPLICATION = 'blog_dj.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
+        'NAME': 'user_db',  # 数据库名
+        'USER': 'root',  # 账户名
+        'PASSWORD': 'root',  # 密码
+        'HOST': 'localhost',  # 主机
+        'PORT': '3306',  # 端口
     }
 }
 # set database Maping
