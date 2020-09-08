@@ -59,3 +59,6 @@ class DatabaseAppsRouter(object):
         elif app_label in DATABASE_MAPPING:
             return False
         return None
+
+
+# DatabaseAppsRouter = DatabaseAppsRouter()
