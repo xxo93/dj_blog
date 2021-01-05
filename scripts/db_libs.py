@@ -61,14 +61,45 @@ class MysqlDB(object):
 
     def execute_sql(self, sql, n: int = 0):
         """ 执行SQL """
-        if n == 0:
-            return self.mysql_engine.execute(sql).fetchall()
         if n == 1:
             return self.mysql_engine.execute(sql).fetchone()  # 或 self.mysql_engine.execute(sql).first()
         if n >= 2:
             return self.mysql_engine.execute(sql).fetchmany(n)
+        return self.mysql_engine.execute(sql).fetchall()
+
+    def trans_decorator(self, *args):
+        """ 封装事务装饰器 """
+        pass
+
+    def query(self, sql, n: int = 0):
+        """ 执行sql """
+        with self.mysql_engine.connect() as connection:
+            if n == 1:
+                return connection.execute(sql).fetchone()
+            if n >= 2:
+                return connection.execute(sql).fetchmany(n)
+            return self.mysql_engine.execute(sql).fetchall()
+    
+    def transaction(self, *args):
+        """
+        :param args: 多个sql语句，构成一个事务
+        :return: 返回结果
+        """
+        with self.mysql_engine.connect() as connection:
+            trans = connection.begin()
+            try:
+                for sql in args:
+                    connection.execute(sql)
+                # 所有sql统一提交
+                trans.commit()
+                return 'success'
+            except Exception as err:
+                # 事务回滚
+                trans.rollback()
+                return err
 
     def cols(self, sql):
+        """ 返回sql结果集的字段名列表 """
         return self.mysql_engine.execute(sql).keys()
 
 
