@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ 
-@Author: wwx800191
-@Date: 2021/3/3
+@Author: wwanzhongming
+@Date: 
 @Desc: 100万以上数据传输/同步
 """
 import pymysql
