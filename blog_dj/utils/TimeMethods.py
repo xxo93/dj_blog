@@ -164,13 +164,15 @@ def get_current_month_date_range():
     return date_start_str, date_end_str
 
 
-def get_date_range_by_year_and_month(year: int, month: int) -> tuple:
+def get_date_range_by_year_and_month(year: int = datetime.datetime.now().year,
+                                     month: int = datetime.datetime.now().month) -> tuple:
     """
-    :param year: 2020
-    :param month: 8
-    :return: ('2020-08-01', '2020-08-31')
+    :param year: 年份 int，默认为当年。eg: 2021
+    :param month: 月份 int，默认为当月。eg: 4
+    :return: 返回该月份的第1天和最后1天日期。eg: ('2021-04-01', '2021-04-30')
     """
     w_day, month_range = calendar.monthrange(year, month)
+    month = str(month).zfill(2)
     return "%s-%s-01" % (year, month), "%s-%s-%s" % (year, month, month_range)
 
 
