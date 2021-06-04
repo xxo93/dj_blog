@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @Author: wwx800191
-@Date: 2021/3/26
+@Date: 2021/6/4
 @Desc: 文件
 """
 import re
@@ -18,8 +18,8 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.utils.encoding import escape_uri_path
 
-from PyVbord.utils.errors import ParamsException
-from PyVbord.utils.errors_code import RECORD_NOT_EXISTS
+from .errors import ParamsException
+from .errors_code import RECORD_NOT_EXISTS
 
 
 def upload_to_localhost(files, paths, target_dir, root_directory=None):
