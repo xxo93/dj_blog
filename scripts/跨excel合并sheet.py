@@ -1,6 +1,7 @@
 import os
 from win32com.client import Dispatch
 
+
 def getAllFilesOfWalk(dir):
     """
     @desc: 使用listdir循环遍历
@@ -47,11 +48,11 @@ class ExcelCOM():
             try:
                 # 获取目标sheet
                 sheet = wb2.Worksheets(1)
+            except:
+                self.xlApp.Worksheets.Add().Name = 'sheet1'
+            else:
                 # 将copy_sht复制到目标sheet表之前的位置
                 copy_sht.Copy(Before=sheet)
-            except:
-                self.xlApp.Worksheets.Add().Name = 'base'
-                pass
 
         wb2.Save()  # 保存excel
         wb2.Close()  # 关闭excel
@@ -63,9 +64,13 @@ class ExcelCOM():
 if __name__ == '__main__':
     basepath = 'D:\项目资料\系统开发\替代测试系统开发\无线器件替代可视化协同平台（第三版）\硬件器件替代测试计划和报告模板'
     file_list1 = getAllFilesOfWalk(basepath + '\电源类自动生成模板')
-    file_list2 = getAllFilesOfWalk(basepath + '\电源类自动生成模板')
-    file_list3 = getAllFilesOfWalk(basepath + '\电源类自动生成模板')
-    file_list = [*file_list1, *file_list2, *file_list3]
+    # file_list2 = getAllFilesOfWalk(basepath + '\电源类自动生成模板')
+    # file_list3 = getAllFilesOfWalk(basepath + '\电源类自动生成模板')
+    file_list = [
+        *file_list1,
+        # *file_list2,
+        # *file_list3,
+    ]
     print(len(file_list))
 
     basefile = basepath + '\器件替代模板.xlsx'
@@ -77,4 +82,3 @@ if __name__ == '__main__':
         print(f'已合并{i}个项目')
 
     print('-- over! --')
-
