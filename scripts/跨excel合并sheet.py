@@ -44,10 +44,13 @@ class ExcelCOM():
         wb2 = self.xlApp.Workbooks.Open(excel)
         for i in range(4, 0, -1):
             copy_sht = wb1.Worksheets(i)
-
-            sheet = wb2.Worksheets(1)
-            # 将copy_sht复制到sheet表之前的位置
-            copy_sht.Copy(Before=sheet)
+            try:
+                # 获取目标sheet
+                sheet = wb2.Worksheets(1)
+                # 将copy_sht复制到目标sheet表之前的位置
+                copy_sht.Copy(Before=sheet)
+            except:
+                pass
 
         wb2.Save()  # 保存excel
         wb2.Close()  # 关闭excel
