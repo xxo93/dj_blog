@@ -50,6 +50,7 @@ class ExcelCOM():
                 # 将copy_sht复制到目标sheet表之前的位置
                 copy_sht.Copy(Before=sheet)
             except:
+                self.xlApp.Worksheets.Add().Name = 'base'
                 pass
 
         wb2.Save()  # 保存excel
@@ -68,8 +69,10 @@ if __name__ == '__main__':
     print(len(file_list))
 
     basefile = basepath + '\器件替代模板.xlsx'
+
+    obj = ExcelCOM()
     for i, file in enumerate(file_list, 1):
-        obj = ExcelCOM()
+        # print(file)
         obj.merge_sheet(basefile, file)
         print(f'已合并{i}个项目')
 
