@@ -218,3 +218,40 @@ def get_date_list(begin_date: str, end_date: str, format='%Y-%m-%d') -> list:
     """
     date_list = [x.strftime(format) for x in list(pd.date_range(start=begin_date, end=end_date))]
     return date_list
+
+
+def get_month_list(month: str, input_format: str, output_format: str = None, forward: int = 0, backward: int = 0) -> list:
+    """
+    描述：根据月份返回之前m个月、之后n个月的连续月份数组
+    :param month: '202107' 或 '2021-07' 或 '2021/07'
+    :param input_format: '%Y%m' 或 '%Y-%m' 或 '%Y/%m'...
+    :param output_format: None（默认与input_format相同）或'%Y%m' 或 '%Y-%m' 或 '%Y/%m'...
+    :param forward: 前推月份
+    :param backward: 后推月份
+    """
+    date = datetime.datetime.strptime(month, input_format)
+    if not output_format:
+        output_format = input_format
+    month_list = [datetime.datetime.strftime(date, output_format)]
+
+    year = date.year
+    month = date.month
+    for _ in range(forward):
+        if month == 1:
+            month = 12
+            year -= 1
+        else:
+            month -= 1
+        month_list.append(datetime.datetime.strftime(datetime.datetime(year, month, 1), output_format))
+    year = date.year
+    month = date.month
+    for _ in range(backward):
+        if month == 12:
+            month = 1
+            year += 1
+        else:
+            month += 1
+        month_list.append(datetime.datetime.strftime(datetime.datetime(year, month, 1), output_format))
+    month_list = sorted(list(set(month_list)))
+    return month_list
+
