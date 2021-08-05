@@ -2,7 +2,7 @@
 """ 
 @Author: zhongmin
 @Date: 2021/6
-@Desc: 
+@Desc: 数据库的值与显示的值映射关系
 """
 from django.db import models
 from rest_framework import serializers
