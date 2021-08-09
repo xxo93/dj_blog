@@ -70,7 +70,7 @@ PyPDF2==1.26.0
 pypinyin==0.41.0
 python-dateutil==2.8.0
 pytz==2019.2
-pywin32==227
+pywin32==301
 redis==3.3.4
 requests==2.22.0
 schedule==0.6.0
