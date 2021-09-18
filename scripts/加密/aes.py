@@ -3,6 +3,7 @@
 @Author: wangzhongmin
 @Date: 2021/4/23
 @Desc: AES 加密
+pip install pycryptodome
 """
 
 from Crypto.Cipher import AES
