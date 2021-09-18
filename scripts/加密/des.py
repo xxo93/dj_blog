@@ -3,6 +3,7 @@
 @author: wangzhongmin
 @time: 2021/9/13 9:38
 @desc: DES加密 类
+pip install pyDes
 """
 import base64
 import json
