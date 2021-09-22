@@ -335,7 +335,10 @@ class Excel:
 
         if isinstance(data, query.QuerySet):
             data = [model_to_dict(obj) for obj in data]
-
+        
+        if isinstance(data, pd.core.frame.DataFrame):
+            data = data.to_dict(orient='records')
+            
         if data:
             column_names = column_list if column_list else data[0].keys()
             for d in data:
