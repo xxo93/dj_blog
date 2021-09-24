@@ -255,3 +255,86 @@ def get_month_list(month: str, input_format: str, output_format: str = None, for
     month_list = sorted(list(set(month_list)))
     return month_list
 
+
+def timestamp2strftime(timestamp, format: str = "%Y-%m-%d %H:%M:%S") -> str:
+    """
+    时间戳转换为指定时间格式字符
+    :param timestamp: 时间戳 (eg: 1605455999 or '1605455999')
+    :param format: 转换成时间字符的指定格式
+    """
+    if not isinstance(timestamp, (str, int)):
+        raise Exception("%s类型必须为 'str' 或 'int' 类型" % timestamp)
+    try:
+        timestamp = int(timestamp)
+    except Exception as err:
+        raise err
+    return time.strftime(format, time.localtime(timestamp))
+
+
+def strftime2timestamp(str_time: str) -> int:
+    """
+    时间格式字符转换为时间戳
+    :param str_time: 时间格式字符 (eg: 'YYYY-MM-DD hh:mm:ss')
+    """
+    if len(str_time) == 10:
+        str_time = str_time + ' 00:00:00'
+    time_arr = time.strptime(str_time, "%Y-%m-%d %H:%M:%S")
+    return int(time.mktime(time_arr))
+
+
+def diff_days_by_date(start_date: str, end_date: str) -> int:
+    """
+    计算两个日期之间相差的天数
+    :param start_date: 起始时间 (xxxx-xx-xx)
+    :param end_date: 结束时间 (xxxx-xx-xx)
+    :return int: 相差天数
+    """
+    start = datetime.date(*map(int, start_date.split('-')))
+    end = datetime.date(*map(int, end_date.split('-')))
+    return (end - start).days
+
+
+def diff_days_by_timestamp(start_timestamp, end_timestamp, mode=None):
+    """
+    计算两个时间戳之间相差天数
+    :param start_timestamp: 起始时间戳 (eg: 1605455999)
+    :param end_timestamp: 结束时间戳 (eg: 1626191999)
+    :param mode: 默认为 None 不取整  # mode 可选模式：不取整(None), 向下取整('ceil'), 四舍五入('round'), 向下取整('floor')
+    :return int: 相差天数
+    """
+    if isinstance(start_timestamp, str) or isinstance(end_timestamp, str):
+        start_timestamp, end_timestamp = int(start_timestamp), int(end_timestamp)
+    diff_days = (end_timestamp - start_timestamp) / (3600 * 24)
+    if not mode:
+        return diff_days
+    getInt = round if mode == 'round' else getattr(math, mode)
+    return getInt(diff_days)
+
+
+def get_timestamp_period(start_stamp, end_stamp, n=None) -> list:
+    """
+    根据两个时间戳，分割时间段，根据时间戳获取时间区间内的信息，建议遵循区间左闭右开
+        eg: [1622736000, 1626191999) 表示左闭右开即 1622736000 <= time < 1626191999
+    1.如果有n: 分成n个时间戳区间
+    2.如果无n: 则按天分割时间戳区间
+    :params start_stamp: 开始时间戳
+    :params end_stamp: 结束时间戳
+    """
+    end_stamp = end_stamp + 1
+    diff_timestamp = end_stamp - start_stamp    # 总的时间差
+
+    # n 不为 None, 则分成 part 个时间区间
+    part = n
+    # n 为 None, 则按天进行区间分割
+    if not n:
+        width = 3600 * 24
+        part = math.ceil(diff_timestamp / width)  # 向上取整 eg: 4.2 天，分成 5 个区间
+    else:
+        width = diff_timestamp / part   # 每个时间段宽度为 width
+
+    period_list = [(start_stamp, round(start_stamp + width))] if part > 1 else [(start_stamp, end_stamp)]
+    cur = start_stamp
+    for i in range(part - 1):
+        cur = round(cur + width)
+        period_list.append((cur, end_stamp) if i == (part - 2) else (cur, round(cur + width)))
+    return period_list
