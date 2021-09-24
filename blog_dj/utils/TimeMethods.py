@@ -62,18 +62,6 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
     return ym_default
 
 
-def range_day(start_date: str, end_date: str) -> int:
-    """
-    计算两个日期之间相差的天数
-    :param start_date: 起始时间 (xxxx-xx-xx)
-    :param end_date: 结束时间 (xxxx-xx-xx)
-    :return: 相差天数
-    """
-    start = datetime.date(*map(int, start_date.split('-')))
-    end = datetime.date(*map(int, end_date.split('-')))
-    return (end - start).days
-
-
 def forward_day(date: str, days: int, format='%Y-%m-%d') -> str:
     """
     计算某个日期向前推n天的日期
