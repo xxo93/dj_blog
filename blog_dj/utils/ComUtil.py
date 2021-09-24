@@ -11,6 +11,7 @@ from collections import namedtuple
 
 import aiomysql
 import pymysql
+import pypinyin
 from django.conf import settings
 import pandas as pd
 from sqlalchemy import create_engine
@@ -18,6 +19,27 @@ from sqlalchemy import create_engine
 from PyVbord.apps.Commons.common_utils import log, error
 
 celery_err_file = os.path.join(settings.LOG_PATH, 'celery_error.log')
+
+
+def cn_to_pinyin(word: str, joiner: str = '', mode: str = 'lower') -> str:
+    """
+    汉字转拼音
+        eg: word = '你好', joiner = '', mode = 'lower'' 转换成 'nihao'
+        eg: word = '你好', joiner = ' ', mode = 'title'' 转换成 'Ni Hao'
+    :param word: 汉字字符串
+    :param joiner: 拼音连接符 (默认无连接符)
+    :param mode:
+        lower() 全小写 (默认)
+        upper() 全大写
+        capitalize() 首字母大写，其他字母变小写
+        title() 将字符串中每个单词的首字母大写，其余字母小写，非字母后的第一个字母将转换为大写字母
+    :return: 拼音字符串
+    """
+    s = ''
+    for i in pypinyin.pinyin(word, style=pypinyin.NORMAL):
+        s += ''.join(i)
+        s += joiner
+    return eval(f"'{s}'.{mode}()").strip()
 
 
 def time_add(time, param, format='%Y-%m-%d %X'):
