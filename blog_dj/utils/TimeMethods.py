@@ -6,18 +6,45 @@ import arrow
 import time
 import datetime
 import calendar
-from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 
 import pandas as pd
+import jionlp as jio
+from dateutil.relativedelta import relativedelta
+
+
+def get_time_range_from_txt(command: str, format="%Y-%m-%d %H:%M:%S") -> list:
+    """
+    给定时间文本，解析其时间语义（时间戳、时长）等
+    :param command: 时间文本
+    :param format: 时间格式 (默认"%Y-%m-%d %H:%M:%S")
+    :return: 时间范围
+    """
+    if not command:
+        return []
+    try:
+        time_range = jio.parse_time(command).get('time')
+        start_time = datetime.datetime.strptime(time_range[0], '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.datetime.strptime(time_range[1], "%Y-%m-%d %H:%M:%S")
+        if start_time > datetime.datetime.now() or end_time < datetime.datetime.strptime('1970-01-01 00:00:00',
+                                                                                         "%Y-%m-%d %H:%M:%S"):
+            return []
+        time_range[0] = datetime.datetime.strptime(time_range[0], "%Y-%m-%d %H:%M:%S").strftime(format)
+        time_range[1] = datetime.datetime.strptime(time_range[1], "%Y-%m-%d %H:%M:%S").strftime(format)
+
+    except ValueError:
+        time_range = []
+    return time_range
 
 
 def execute_time(func):
     def int_time(*args, **kwargs):
         start_time = time.time()  # 程序开始时间
-        ret = func(*args,**kwargs)
+        ret = func(*args, **kwargs)
         total_time = time.time() - start_time
         print('程序耗时%.8f秒' % total_time)
         return ret
+
     return int_time
 
 
@@ -25,7 +52,7 @@ def timestamp():
     return time.time()
 
 
-def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
+def consecutive_ym(m: int = 0, n: int = 0, char: str = None) -> list:
     """
     描述：返回从当月往前推m个月、往后推n个月的连续月份数组
     1. 默认格式: 2020年12月
@@ -33,8 +60,8 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
     """
     today = datetime.date.today()
 
-    curr_month = today.month    # 当前月份
-    year = today.year - int(((m + 12 - curr_month)/12)) # 推算年份
+    curr_month = today.month  # 当前月份
+    year = today.year - int(((m + 12 - curr_month) / 12))  # 推算年份
 
     for i in range(m):
         curr_month -= 1
@@ -42,10 +69,10 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
             curr_month = 12
     month = curr_month  # 推算月份
 
-    ym_default = [str(year) + "年" + str(month) + "月" ]
+    ym_default = [str(year) + "年" + str(month) + "月"]
     ym_customize = [str(year) + f"{char}" + str(month).zfill(2)]
 
-    for j in range(m+n):
+    for j in range(m + n):
         month += 1
         if month > 12:
             month = 1
@@ -57,9 +84,21 @@ def consecutive_ym(m:int=0, n:int=0, char:str=None) -> list:
         ym_customize.append(date_customize)
 
     if char is not None:
-        return  ym_customize
+        return ym_customize
 
     return ym_default
+
+
+def range_day(start_date: str, end_date: str) -> int:
+    """
+    计算两个日期之间相差的天数
+    :param start_date: 起始时间 (xxxx-xx-xx)
+    :param end_date: 结束时间 (xxxx-xx-xx)
+    :return: 相差天数
+    """
+    start = datetime.date(*map(int, start_date.split('-')))
+    end = datetime.date(*map(int, end_date.split('-')))
+    return (end - start).days
 
 
 def forward_day(date: str, days: int, format='%Y-%m-%d') -> str:
@@ -119,8 +158,23 @@ def str2datetime(date):
     return datetime.datetime.strptime(date, '%Y-%m-%d')
 
 
+def forward_or_back_date(date: str, m: int = 0, d: int = 0, fmt: str = 'YYYY-MM-DD') -> str:
+    """
+    根据日期向前或向后推m个月d天。参数格式与fmt格式分隔符保持一致：
+    eg1: date='2022-12'(年月), 则 fmt='YYYY-MM'（年月）
+    eg2: date='2022/12-10'(年月), 则 fmt='YYYY/MM-DD'（年月）
+    :param date: '2022-12-12'
+    :param m: 1, => '2023-01-12'
+    :param d: 2, => '2023-01-14'
+    :param fmt: 日期格式
+    :return: '2023-01-14'
+    """
+    obj_arrow = arrow.get(date, fmt)
+    return obj_arrow.shift(months=m).shift(days=d).format(fmt)
+
+
 # 待完善...
-def getTheMonth(date:str, n:int, format='%Y%m')->str:
+def getTheMonth(date: str, n: int, format='%Y%m') -> str:
     """
     获取指定月份 往前推n个月 的月份信息
     :param date: str
@@ -176,7 +230,7 @@ def get_current_6_month_forward_range():
 
     data = []
     if cur_month - 6 >= 0:
-        for m in month_lis[cur_month-6: cur_month]:
+        for m in month_lis[cur_month - 6: cur_month]:
             data.append((cur_year, m))
     else:
         for m in month_lis[cur_month - 6:]:
@@ -184,6 +238,7 @@ def get_current_6_month_forward_range():
         for m in month_lis[:cur_month]:
             data.append((cur_year, m))
     return data
+
 
 def ran_month(value):
     """
@@ -208,7 +263,8 @@ def get_date_list(begin_date: str, end_date: str, format='%Y-%m-%d') -> list:
     return date_list
 
 
-def get_month_list(month: str, input_format: str, output_format: str = None, forward: int = 0, backward: int = 0) -> list:
+def get_month_list(month: str, input_format: str, output_format: str = None, forward: int = 0,
+                   backward: int = 0) -> list:
     """
     描述：根据月份返回之前m个月、之后n个月的连续月份数组
     :param month: '202107' 或 '2021-07' 或 '2021/07'
@@ -244,19 +300,19 @@ def get_month_list(month: str, input_format: str, output_format: str = None, for
     return month_list
 
 
-def timestamp2strftime(timestamp, format: str = "%Y-%m-%d %H:%M:%S") -> str:
+def timestamp2strftime(tm_stamp, fm: str = "%Y-%m-%d %H:%M:%S") -> str:
     """
     时间戳转换为指定时间格式字符
-    :param timestamp: 时间戳 (eg: 1605455999 or '1605455999')
-    :param format: 转换成时间字符的指定格式
+    :param tm_stamp: 时间戳 (eg: 1605455999 or '1605455999')
+    :param fm: 转换成时间字符的指定格式
     """
-    if not isinstance(timestamp, (str, int)):
-        raise Exception("%s类型必须为 'str' 或 'int' 类型" % timestamp)
+    if not isinstance(tm_stamp, (str, int)):
+        raise Exception("%s类型必须为 'str' 或 'int' 类型" % tm_stamp)
     try:
-        timestamp = int(timestamp)
+        tm_stamp = int(tm_stamp)
     except Exception as err:
         raise err
-    return time.strftime(format, time.localtime(timestamp))
+    return time.strftime(fm, time.localtime(tm_stamp))
 
 
 def strftime2timestamp(str_time: str) -> int:
@@ -309,7 +365,7 @@ def get_timestamp_period(start_stamp, end_stamp, n=None) -> list:
     :params end_stamp: 结束时间戳
     """
     end_stamp = end_stamp + 1
-    diff_timestamp = end_stamp - start_stamp    # 总的时间差
+    diff_timestamp = end_stamp - start_stamp  # 总的时间差
 
     # n 不为 None, 则分成 part 个时间区间
     part = n
@@ -318,7 +374,7 @@ def get_timestamp_period(start_stamp, end_stamp, n=None) -> list:
         width = 3600 * 24
         part = math.ceil(diff_timestamp / width)  # 向上取整 eg: 4.2 天，分成 5 个区间
     else:
-        width = diff_timestamp / part   # 每个时间段宽度为 width
+        width = diff_timestamp / part  # 每个时间段宽度为 width
 
     period_list = [(start_stamp, round(start_stamp + width))] if part > 1 else [(start_stamp, end_stamp)]
     cur = start_stamp
