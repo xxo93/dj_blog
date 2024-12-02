@@ -46,7 +46,7 @@ mccabe==0.6.1
 monotonic==1.5
 more-itertools==7.2.0
 mysqlclient==1.4.4
-numpy==1.17.1
+numpy==1.22.0
 opencv-python==4.5.1.48
 openpyxl==3.0.0
 pandas==0.25.1
