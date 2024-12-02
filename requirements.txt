@@ -60,7 +60,7 @@ pyasn1==0.4.6
 pycparser==2.19
 pycryptodome==3.8.2
 Pygments==2.4.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pylint==2.3.1
 pymssql==2.1.4
 PyMuPDF==1.18.14
